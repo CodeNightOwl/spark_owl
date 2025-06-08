@@ -3,7 +3,7 @@ const fs = require("fs");
 
 // 收款地址
 const recipientAddress =
-      "sp1pgss8r80gvc6pj89gg9zap6ntycmg2rvm2naw2tmlc9tzp26pe5mn2axgy4j6u";
+      "sp1pgssxwrz6cm825jgc9rh5l0g2nsa3ftrf42mn98mvarfkhttw6gzxqukv45xsv";
 
 
 // 全局错误处理

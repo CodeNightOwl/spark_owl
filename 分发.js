@@ -31,6 +31,8 @@ async function distributeTokens(wallet, recipientAddress, amount) {
     return tx_id;
   } catch (err) {
     console.error(`分发代币到 ${recipientAddress} 失败:`, err.message);
+    console.log('转账接口挂了，就等待30秒后重试...');
+    await new Promise((resolve) => setTimeout(resolve, 30000));
     throw err;
   }
 }
