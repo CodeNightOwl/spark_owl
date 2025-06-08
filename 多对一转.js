@@ -40,7 +40,7 @@ async function receiveTokens(mnemonic, amount) {
     SparkAddress = await wallet.getSparkAddress();
     console.log("发送钱包地址:", SparkAddress);
     // // 将BigInt类型转换为普通Number类型再进行转换
-    // let balanceInBTC = Number(balance) / Math.pow(10, 8);
+    //let balanceInBTC = Number(balance) / Math.pow(10, 8);
     // console.log("钱包余额:", balanceInBTC, "BTC");
     try {
       //转账
@@ -52,16 +52,16 @@ async function receiveTokens(mnemonic, amount) {
       console.log(
         `成功发送 ${amount}sat 代币到 ${recipientAddress}, 交易ID: ${tx_id}`
       );
+         // 将结果写入文件
+    fs.appendFileSync(
+      "多对一转账结果.txt",
+      `Address: ${SparkAddress}, txid: ${tx_id} \n`
+    );
       return tx_id;
     } catch (err) {
       console.error(`分发代币到 ${recipientAddress} 失败:`, err.message);
       // throw err;
     }
-    // 将结果写入文件
-    fs.appendFileSync(
-      "多对一转账结果.txt",
-      `Address: ${SparkAddress}, Balance: ${balanceInBTC} BTC\n`
-    );
 
     // return SparkAddress, balanceInBTC;
   } catch (error) {
