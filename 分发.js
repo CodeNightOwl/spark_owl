@@ -31,8 +31,8 @@ async function distributeTokens(wallet, recipientAddress, amount) {
     return tx_id;
   } catch (err) {
     console.error(`分发代币到 ${recipientAddress} 失败:`, err.message);
-    console.log('转账接口挂了，就等待30秒后重试...');
-    await new Promise((resolve) => setTimeout(resolve, 30000));
+    console.log("转账接口挂了，就等待3秒后重试...");
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     throw err;
   }
 }
@@ -52,7 +52,7 @@ async function distributeTokens(wallet, recipientAddress, amount) {
       },
     });
 
-    console.log("钱包初始化成功，地址:", await wallet.getSparkAddress());
+    console.log("钱包初始化成功，转出地址:", await wallet.getSparkAddress());
 
     // 读取地址文件
     const addresses = fs.readFileSync("地址.txt", "utf8").split("\n");
@@ -65,7 +65,6 @@ async function distributeTokens(wallet, recipientAddress, amount) {
     console.log("当前钱包余额:", balanceInBTC, "BTC");
     // // 设置每个地址分发数量
     // const amountPerAddress = 31600; // 单位: satoshi
-
     // 开始分发
     for (const item of addresses) {
       const address = item.split(",")[1];
@@ -74,18 +73,29 @@ async function distributeTokens(wallet, recipientAddress, amount) {
         console.log("跳过空地址或数量为0的地址");
         continue;
       }
-      try {
-        console.log(`开始分发到地址 ${address}`, amountPerAddress);
-        // break;
-        await distributeTokens(wallet, address, amountPerAddress);
-      } catch (err) {
-        console.error(`地址 ${address} 分发失败，跳过继续下一个`);
+
+      let success = false;
+      let retries = 0;
+      while (!success) {
+        try {
+          console.log(`开始分发到地址 ${address}`, amountPerAddress);
+          await distributeTokens(wallet, address, amountPerAddress);
+          success = true;
+        } catch (err) {
+          console.error(`地址 ${address} 分发失败，重新尝试`);
+          retries++;
+        }
+
+        // 添加延迟避免频繁请求
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        // // 如果重试次数超过3次，则跳出循环
+        // if (retries >= 3) {
+        //   console.log(`地址 ${address} 分发失败，已达到最大重试次数`);
+        //   break;
+        // }
       }
-
-      // 添加延迟避免频繁请求
-      await new Promise((resolve) => setTimeout(resolve, 3000));
     }
-
     console.log("代币分发完成");
   } catch (finalError) {
     console.error("[主流程致命错误]", finalError);
