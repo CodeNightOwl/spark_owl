@@ -31,6 +31,7 @@ async function receiveTokens(mnemonic) {
     console.log("钱包初始化成功");
     balance = (await wallet.getBalance()).balance;
     // console.log(wallet.getBalance.toString());
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     balance = (await wallet.getBalance()).balance;//需要2次才能获取到余额，第一次是领取，第二次是获取余额
     SparkAddress=(await wallet.getSparkAddress());
     console.log("钱包地址:", SparkAddress);
